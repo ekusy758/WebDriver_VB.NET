@@ -82,7 +82,7 @@ Namespace WebTool.Common
         fullUrl = baseUrl_115 & TargetMajorVersion
         fullVer = GetHtmlSource()
       End If
-      
+
       Console.WriteLine("[Msg:] Full Version: " & fullVer)
 
       Return fullVer
