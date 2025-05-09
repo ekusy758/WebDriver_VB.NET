@@ -1,5 +1,6 @@
 Option Explicit On
 Imports System
+Imports System.IO
 Imports OpenQA.Selenium.Chrome
 
 Namespace WebTool.Common
@@ -21,16 +22,14 @@ Namespace WebTool.Common
   '  
   '  メソッド一覧　：InitCtor    コンストラクタの初期化処理を行う
   '  　　　　　　　　DriverTest  WebDriver起動テストを行う (Public)
+  '  　　　　　　　　GetBrowserPath ブラウザのパスを取得する (Private)
   '
   '  最終更新日　　：2025.01.03 Ver1.0.0 新規作成
+  '  　　　　　　　　2025.05.09 Ver1.0.1 ブラウザのパス取得メソッドを追加
   '****************************************************************************
   Public Class WebController
 
     ' フィールド定義
-    'Private browserExe As String = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-    Private browserExe As String = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-    '"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Google Chrome.lnk"
-    'Private driverPath As String = ".\driver\chrome\win64\"
     Private driverPath As String = ".\Driver\Chrome\"
     Private driverExe As String = driverPath & "chromedriver.exe"
     Private verCon As VersionController
@@ -51,7 +50,7 @@ Namespace WebTool.Common
       Try
         ' インスタンスを生成し、バージョン情報を取得する
         Console.WriteLine("[Msg:] VersionControllerインスタンスを生成します。")
-        verCon = New VersionController(browserExe, driverExe)
+        verCon = New VersionController(GetBrowserPath(), driverExe)
         
         ' バージョンチェック結果を確認する
         If Not (verCon.CheckStatus) Then
@@ -83,6 +82,26 @@ Namespace WebTool.Common
       Console.WriteLine("+--------------------------------------------------+")
       Console.WriteLine("[Msg:] WebDriver起動テストを終了します。")
     End Sub
+
+    '**************************************************************************
+    ' 概要：ブラウザのパスを候補から取得する
+    ' 引数：なし
+    ' 戻値：ブラウザのパス（絶対パス）
+    ' 参照：System.IO
+    ' 備考：なし
+    '**************************************************************************
+    Private Function GetBrowserPath() As String
+      Dim possiblePaths As String() = {
+        "C:\Program Files\Google\Chrome\Application\chrome.exe",
+        "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+      }
+      For Each path In possiblePaths
+        If File.Exists(path) Then
+          Return path
+        End If
+      Next
+      Return Nothing ' 見つからない場合
+    End Function
 
   End Class
 
